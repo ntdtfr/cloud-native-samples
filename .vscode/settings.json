@@ -1,0 +1,12 @@
+{
+    "terminal.integrated.fontFamily": " Hack Nerd Font",
+    "terminal.integrated.localEchoExcludePrograms": [
+        "vim",
+        "vi",
+        "nano",
+        "tmux",
+        "nvim"
+    ],
+    "terminal.integrated.middleClickBehavior": "paste",
+    "terminal.integrated.mouseWheelZoom": true
+}
