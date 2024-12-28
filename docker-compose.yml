@@ -1,0 +1,15 @@
+version: '3'
+services:
+  video-streaming:
+    image: video-streaming:latest
+    build:
+      context: ./video-streaming
+      dockerfile: Dockerfile.dev
+    container_name: video-streaming
+    restart: always
+    # volumes:
+    #   - ./videos:/opt/video-streaming/videos
+    environment:
+      - PORT=3000
+    ports:
+      - "3000:3000"
