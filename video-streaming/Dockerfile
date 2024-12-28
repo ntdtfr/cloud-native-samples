@@ -18,7 +18,8 @@ USER node
 COPY --chown=node:node package*.json $APP_DIR/
 
 # Install application modules
-RUN npm install --only=production && npm cache clean --force
+RUN npm install --only=production && \
+  npm cache clean --force
 
 # Copy remaining files
 #COPY --chown=node:node . .
