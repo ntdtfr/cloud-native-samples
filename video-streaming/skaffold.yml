@@ -1,0 +1,49 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: samples
+
+profiles:
+  - name: dev
+    build:
+      tagPolicy:
+        sha256: {}
+      artifacts:
+        - image: ntdtfr/video-streaming
+          context: .
+          docker:
+            dockerfile: Dockerfile.dev
+      local:
+        useBuildkit: true
+        concurrency: 0
+    deploy: &deploy
+      kubectl: {}
+    manifests: &manifests
+      rawYaml:
+        - k8s/*.yml
+    portForward: &portForward
+      - resourceType: service
+        resourceName: video-streaming
+        port: 3000
+        localPort: 3000
+    activation:
+      - kubeContext: minikube
+
+  - name: gcp
+    build:
+      tagPolicy:
+        sha256: {}
+      googleCloudBuild:
+        workerPool: projects/samples/locations/europe-west1/workerPools/worker-development-pool
+        projectId: samples
+        concurrency: 0
+      artifacts:
+        - image: ntdtfr/video-streaming
+          kaniko:
+            dockerfile: Dockerfile.dev
+            cache: {}
+    deploy: *deploy
+    manifests: *manifests
+    portForward: *portForward
+    activation:
+      - kubeContext: gke_samples_europe-west1-b_samples-cluster

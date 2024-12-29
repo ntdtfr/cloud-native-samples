@@ -1,0 +1,30 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: cloud-native-samples
+
+requires:
+  - configs: ["video-streaming"]
+    path: ./video-streaming
+    activeProfiles: &<
+      - name: dev
+        activatedBy: [dev]
+      - name: dev-gcp
+        activatedBy: [dev-gcp]
+
+profiles:
+  - name: dev
+    build:
+      local:
+        concurrency: 0
+        useBuildkit: true
+    activation:
+      - kubeContext: minikube
+  - name: dev-gcp
+    build:
+      googleCloudBuild:
+        workerPool: projects/samples/locations/europe-west1/workerPools/worker-dev-pool
+        projectId: samples
+        concurrency: 0
+    activation:
+      - kubeContext: gke_samples_europe-west1-b_samples-k8s-cluster

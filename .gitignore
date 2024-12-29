@@ -51,4 +51,8 @@ Temporary Items
 
 # Support for Project snippet scope
 
+### NodeJS ###
+node_modules/
+
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode
