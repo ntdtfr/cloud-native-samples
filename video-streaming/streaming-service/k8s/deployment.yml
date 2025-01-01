@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: video-streaming
+  name: streaming-service
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: video-streaming
+      app: streaming-service
   template:
     metadata:
       labels:
-        app: video-streaming
+        app: streaming-service
     spec:
       containers:
-      - name: video-streaming
-        image: ntdtfr/video-streaming:latest
+      - name: streaming-service
+        image: ntdtfr/streaming-service:latest
         ports:
         - containerPort: 3000
         resources:
@@ -42,10 +42,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: video-streaming
+  name: streaming-service
 spec:
   selector:
-    app: video-streaming
+    app:
+    app: streaming-service
   ports:
     - protocol: TCP
       port: 3000

@@ -1,8 +1,8 @@
 FROM node:23.1.0-alpine
 
 # define environment variables
-ENV APP_DIR=/opt/video-streaming
-ENV NODE_ENV=production
+ENV APP_DIR=/opt/streaming-service
+ENV NODE_ENV=development
 ENV NODE_PORT=3000
 
 # Create application folder and assign rights to the node user

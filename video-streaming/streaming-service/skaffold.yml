@@ -9,7 +9,7 @@ profiles:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: ntdtfr/video-streaming
+        - image: ntdtfr/streaming-service
           context: .
           docker:
             dockerfile: Dockerfile.dev
@@ -23,7 +23,7 @@ profiles:
         - k8s/*.yml
     portForward: &portForward
       - resourceType: service
-        resourceName: video-streaming
+        resourceName: streaming-service
         port: 3000
         localPort: 3000
     activation:
@@ -38,7 +38,7 @@ profiles:
         projectId: samples
         concurrency: 0
       artifacts:
-        - image: ntdtfr/video-streaming
+        - image: ntdtfr/streaming-service
           kaniko:
             dockerfile: Dockerfile.dev
             cache: {}
