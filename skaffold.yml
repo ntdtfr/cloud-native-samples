@@ -6,7 +6,7 @@ metadata:
 requires:
   - configs: ["video-streaming"]
     path: ./video-streaming
-    activeProfiles: &<
+    activeProfiles: &local_and_cloud_profiles
       - name: dev
         activatedBy: [dev]
       - name: dev-gcp
