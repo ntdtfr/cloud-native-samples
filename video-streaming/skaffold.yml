@@ -1,11 +1,11 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: cloud-native-samples
+  name: video-streaming
 
 requires:
-  - configs: ["video-streaming"]
-    path: ./video-streaming
+  - configs: ["streaming-service"]
+    path: ./streaming-service
     activeProfiles: &local_and_cloud_profiles
       - name: dev
         activatedBy: [dev]

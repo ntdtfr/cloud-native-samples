@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: streaming-service
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: streaming-service
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: streaming-service
-        image: ntdtfr/streaming-service:latest
+        image: streaming-service:latest
         ports:
         - containerPort: 3000
         resources:
@@ -45,7 +45,6 @@ metadata:
   name: streaming-service
 spec:
   selector:
-    app:
     app: streaming-service
   ports:
     - protocol: TCP

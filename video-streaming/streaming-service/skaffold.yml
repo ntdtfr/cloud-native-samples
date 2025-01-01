@@ -1,7 +1,7 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: samples
+  name: streaming-service
 
 profiles:
   - name: dev
@@ -9,7 +9,7 @@ profiles:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: ntdtfr/streaming-service
+        - image: streaming-service
           context: .
           docker:
             dockerfile: Dockerfile.dev
