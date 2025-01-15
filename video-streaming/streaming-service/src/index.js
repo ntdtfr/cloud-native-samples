@@ -1,18 +1,16 @@
+// Modules dependencies (Express, File System)
 const express = require('express');
 const fs = require('fs');
 
+// Express app
 const app = express();
 
+// HTTP port from NODE_PORT environment variable
 const DEFAULT_PORT = 3000;
+const port = parseInt(process.env.NODE_PORT || DEFAULT_PORT);
 
-if (!process.env.PORT) {
-  process.env.PORT = DEFAULT_PORT;
-}
-
-const PORT = parseInt(process.env.PORT);
-
+// serve static video file
 app.get('/video', (req, res) => {
-  //res.send('Hello World!')
   const path = "./videos/file_example_MP4_480_1_5MG.mp4";
   fs.stat(path, (err, stats) => {
     if (err) {
@@ -28,6 +26,7 @@ app.get('/video', (req, res) => {
   })
 });
 
-app.listen(PORT, () => {
-  console.log('Example app listening on port ' + PORT + '!')
+// start HTTP server
+app.listen(port, () => {
+  console.log('Example app listening on port ' + port + '!')
 });
