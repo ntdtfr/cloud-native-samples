@@ -1,0 +1,399 @@
+# docs/api/openapi.yaml - OpenAPI specification
+openapi: 3.0.3
+info:
+  title: Order Service API
+  description: API for managing orders in the e-commerce platform
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: https://api.example.com/api/v1
+    description: Production server
+  - url: https://staging-api.example.com/api/v1
+    description: Staging server
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+tags:
+  - name: Orders
+    description: Operations about orders
+security:
+  - BearerAuth: []
+paths:
+  /orders:
+    post:
+      summary: Create a new order
+      description: Create a new order for the authenticated customer
+      operationId: createOrder
+      tags:
+        - Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get customer orders
+      description: Get all orders for the authenticated customer
+      operationId: getCustomerOrders
+      tags:
+        - Orders
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: status
+          in: query
+          description: Filter orders by status
+          schema:
+            type: string
+            enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+      responses:
+        '200':
+          description: Orders retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrdersListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders/{id}:
+    get:
+      summary: Get order by ID
+      description: Get a specific order by ID for the authenticated customer
+      operationId: getOrderById
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders/{id}/status:
+    patch:
+      summary: Update order status
+      description: Update the status of a specific order
+      operationId: updateOrderStatus
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+                  description: New order status
+      responses:
+        '200':
+          description: Order status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders/{id}/cancel:
+    post:
+      summary: Cancel order
+      description: Cancel a specific order
+      operationId: cancelOrder
+      tags:
+        - Orders
+      parameters:
+        - name: id
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+  schemas:
+    OrderItem:
+      type: object
+      required:
+        - productId
+        - quantity
+        - price
+        - name
+      properties:
+        productId:
+          type: string
+          description: ID of the product
+        quantity:
+          type: integer
+          description: Quantity of the product
+          minimum: 1
+        price:
+          type: number
+          description: Price per unit of the product
+          minimum: 0
+        name:
+          type: string
+          description: Name of the product
+    ShippingAddress:
+      type: object
+      required:
+        - street
+        - city
+        - state
+        - country
+        - zipCode
+      properties:
+        street:
+          type: string
+          description: Street address
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: Country
+        zipCode:
+          type: string
+          description: ZIP or postal code
+    OrderRequest:
+      type: object
+      required:
+        - items
+        - shippingAddress
+        - paymentMethod
+      properties:
+        items:
+          type: array
+          description: Items in the order
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          minItems: 1
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        paymentMethod:
+          type: string
+          description: Payment method
+          enum: [CREDIT_CARD, DEBIT_CARD, PAYPAL, BANK_TRANSFER]
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Order ID
+        customerId:
+          type: string
+          description: Customer ID
+        items:
+          type: array
+          description: Items in the order
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        totalAmount:
+          type: number
+          description: Total amount of the order
+        status:
+          type: string
+          description: Order status
+          enum: [PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED]
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        paymentMethod:
+          type: string
+          description: Payment method
+          enum: [CREDIT_CARD, DEBIT_CARD, PAYPAL, BANK_TRANSFER]
+        paymentStatus:
+          type: string
+          description: Payment status
+          enum: [PENDING, COMPLETED, FAILED, REFUNDED]
+        trackingNumber:
+          type: string
+          description: Shipping tracking number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Order creation date and time
+        updatedAt:
+          type: string
+          format: date-time
+          description: Order last update date and time
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: true
+        message:
+          type: string
+          description: Response message
+        data:
+          type: object
+          description: Response data
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: false
+        message:
+          type: string
+          description: Error message
+    OrderResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                order:
+                  $ref: '#/components/schemas/Order'
+    OrdersListResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                orders:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Order'
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      description: Total number of orders
+                    page:
+                      type: integer
+                      description: Current page number
+                    limit:
+                      type: integer
+                      description: Number of items per page
+                    pages:
+                      type: integer
+                      description: Total number of pages
