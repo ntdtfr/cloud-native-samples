@@ -1,13 +1,22 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: cloud-native-samples
+  name: services
 
 requires:
   - configs: ["order-service"]
-    path: services/order-service
+    path: order-service
     activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
       - name: cloud
         activatedBy: [gcp]
+
+profiles:
+  - name: minikube
+    build:
+      local:
+        concurrency: 0
+        useBuildkit: true
+    activation:
+      - kubeContext: minikube

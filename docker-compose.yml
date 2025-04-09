@@ -1,0 +1,21 @@
+services:
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+      target: development
+    container_name: order-service
+    restart: always
+    # volumes:
+    #   - ./videos:/opt/app/videos
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+    ports:
+      - "8080:8080"
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
