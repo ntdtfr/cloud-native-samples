@@ -8,6 +8,11 @@ spec:
   selector:
     matchLabels:
       app: order-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -17,7 +22,22 @@ spec:
       - name: order-service
         image: order-service:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: development
+        - name: PORT
+          value: "3000"
+        - name: MONGODB_URI
+          valueFrom:
+            secretKeyRef:
+              name: order-service-secrets
+              key: mongodb-uri
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: order-service-secrets
+              key: jwt-secret
         resources:
           limits:
             memory: "256Mi"  # Maximum memory allowed
@@ -25,19 +45,25 @@ spec:
           requests:
             memory: "128Mi"  # Initial memory request
             cpu: "100m"       # Initial CPU request
-        # livenessProbe:
-        #   httpGet:
-        #     path: /                # The path to check for the liveness probe
-        #     port: 80               # The port to check on
-        #   initialDelaySeconds: 15  # Wait this many seconds before starting the probe
-        #   periodSeconds: 10        # Check the probe every 10 seconds
-        # readinessProbe:
-        #   httpGet:
-        #     path: /                # The path to check for the readiness probe
-        #     port: 80               # The port to check on
-        #   initialDelaySeconds: 5   # Wait this many seconds before starting the probe
-        #   periodSeconds: 5         # Check the probe every 5 seconds
-
+        livenessProbe:
+          httpGet:
+            path: /health          # The path to check for the liveness probe
+            port: 3000             # The port to check on
+          initialDelaySeconds: 30  # Wait this many seconds before starting the probe
+          periodSeconds: 10        # Check the probe every 10 seconds
+        readinessProbe:
+          httpGet:
+            path: /                # The path to check for the readiness probe
+            port: 3000             # The port to check on
+          initialDelaySeconds: 5   # Wait this many seconds before starting the probe
+          periodSeconds: 5         # Check the probe every 5 seconds
+        volumeMounts:
+        - name: config-volume
+          mountPath: /opt/app/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: order-service-config
 ---
 apiVersion: v1
 kind: Service
@@ -48,6 +74,6 @@ spec:
     app: order-service
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 3000
+      targetPort: 3000
   type: ClusterIP
