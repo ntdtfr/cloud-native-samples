@@ -1,0 +1,31 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: order-service
+
+profiles:
+  - name: minikube
+    build:
+      tagPolicy:
+        sha256: {}
+      artifacts:
+        - image: order-service
+          context: .
+          docker:
+            dockerfile: Dockerfile
+            target: development
+      local:
+        useBuildkit: true
+        concurrency: 0
+    deploy: &deploy
+      kubectl: {}
+    manifests: &manifests
+      rawYaml:
+        - ../../infrastructure/k8s/services/order*.yml
+    portForward: &portForward
+      - resourceType: service
+        resourceName: order-service
+        port: 8080
+        localPort: 8081
+    activation:
+      - kubeContext: minikube
