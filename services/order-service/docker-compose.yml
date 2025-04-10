@@ -11,7 +11,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - MONGODB_URI=mongodb://mongo:27017/order
+      - MONGODB_URI=mongodb://mongodb:27017/order
     volumes:
       - ./src:/opt/app/src
       - ./docs:/opt/app/docs
@@ -20,12 +20,12 @@ services:
     networks:
       - order-service-network
 
-  mongo:
-    image: mongo:5.0
+  mongodb:
+    image: mongo:6.0
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - mongodb-data:/data/db
     networks:
       - order-service-network
 
@@ -34,4 +34,4 @@ networks:
     driver: bridge
 
 volumes:
-  mongo-data:
+  mongodb-data:
