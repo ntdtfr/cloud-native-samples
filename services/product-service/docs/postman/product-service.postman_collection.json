@@ -1,0 +1,246 @@
+{
+  "info": {
+    "name": "Product Service API",
+    "description": "Collection for testing the Product Service API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if the service is healthy"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/products?name=&categories=&min_price=0&max_price=0&sort_by=name&sort_order=asc&limit=10&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "description": "Product name (supports partial matching)"
+                },
+                {
+                  "key": "categories",
+                  "value": "",
+                  "description": "Product categories"
+                },
+                {
+                  "key": "min_price",
+                  "value": "0",
+                  "description": "Minimum price"
+                },
+                {
+                  "key": "max_price",
+                  "value": "0",
+                  "description": "Maximum price"
+                },
+                {
+                  "key": "sort_by",
+                  "value": "name",
+                  "description": "Field to sort by"
+                },
+                {
+                  "key": "sort_order",
+                  "value": "asc",
+                  "description": "Sort order (asc or desc)"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of records to return"
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "description": "Number of records to skip"
+                }
+              ]
+            },
+            "description": "Get all products with filtering options",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products", "{{product_id}}"]
+            },
+            "description": "Get a product by ID",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/products",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products"]
+            },
+            "description": "Create a new product",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Product Name\",\n  \"description\": \"Product Description\",\n  \"price\": 19.99,\n  \"sku\": \"SKU123456\",\n  \"inventory\": 100,\n  \"categories\": [\"category1\", \"category2\"]\n}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/api/v1/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products", "{{product_id}}"]
+            },
+            "description": "Update an existing product",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Product Name\",\n  \"description\": \"Updated Product Description\",\n  \"price\": 29.99,\n  \"sku\": \"SKU123456\",\n  \"inventory\": 50,\n  \"categories\": [\"category1\", \"category3\"]\n}"
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/api/v1/products/{{product_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "products", "{{product_id}}"]
+            },
+            "description": "Delete a product",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{auth_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "YOUR_JWT_TOKEN",
+      "type": "string"
+    },
+    {
+      "key": "product_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

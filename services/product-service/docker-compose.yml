@@ -1,8 +1,7 @@
 services:
-
   product-service:
     build:
-      context: ./services/product-service
+      context: .
       dockerfile: Dockerfile
       target: development
       args:
@@ -18,35 +17,14 @@ services:
       - RABBITMQ_URI=amqp://dev:dev@rabbitmq:5672/
       - RABBITMQ_EXCHANGE=product_exchange
       - AUTH_JWT_SECRET=your-secret-key
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
     depends_on:
       - mongodb
       - redis
       - rabbitmq
     restart: unless-stopped
     networks:
-      - microservices-network
-
-  order-service:
-    build:
-      context: ./services/order-service
-      dockerfile: Dockerfile
-      target: development
-    container_name: order-service
-    ports:
-      - "8080:3000"
-    environment:
-      - NODE_ENV=development
-      - PORT=3000
-      - MONGODB_URI=mongodb://mongodb:27017/order
-    volumes:
-      - ./services/order-service/src:/opt/app/src
-    depends_on:
-      - mongodb
-      # - redis
-      # - rabbitmq
-    networks:
-      - microservices-network
+      - product-network
 
   mongodb:
     image: mongo:6.0
@@ -54,9 +32,9 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongodb-data:/data/db
+      - mongodb_data:/data/db
     networks:
-      - microservices-network
+      - product-network
 
   redis:
     image: redis:7.0-alpine
@@ -66,7 +44,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - microservices-network
+      - product-network
 
   rabbitmq:
     image: rabbitmq:3.11-management
@@ -80,13 +58,13 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - microservices-network
+      - product-network
 
 networks:
-  microservices-network:
+  product-network:
     driver: bridge
 
 volumes:
-  mongodb-data:
+  mongodb_data:
   redis_data:
   rabbitmq_data:
