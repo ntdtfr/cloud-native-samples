@@ -16,6 +16,23 @@ This is a microservice for managing orders in an e-commerce platform. The servic
 - Error handling
 - Rate limiting and security measures
 
+## Architecture Overview
+
+The service follows a layered architecture:
+
+1. **API Layer**: HTTP request handling, validation, and response formatting
+2. **Service Layer**: Business logic and operations
+3. **Data Layer**: MongoDB models and database interactions
+
+## Security Measures
+
+- JWT authentication
+- Helmet for HTTP headers security
+- CORS configuration
+- Rate limiting
+- Input validation
+- Error handling without exposing internals
+
 ## Tech Stack
 
 - **Backend**: Node.js, Express.js
@@ -53,17 +70,18 @@ order-service/
 
 ### Prerequisites
 
-- Node.js 14+
+- Node.js 22+
 - MongoDB
-- Docker (optional)
-- Kubernetes/Helm (optional for deployment)
+- Docker
+- Kubernetes (Minikube)
+- Skaffold
 
 ### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-org/order-service.git
-   cd order-service
+git clone https://github.com/nntran/cloud-native-samples.git
+cd cloud-native-samples/services/order-service
    ```
 
 2. Install dependencies:
@@ -122,32 +140,17 @@ docker run -p 8080:3000 --env-file .env order-service
 
 ### Kubernetes Deployment
 
-```bash
-kubectl apply -f deployment/kubernetes/
-```
-
-### Helm Deployment
+* With kubectl
 
 ```bash
-helm install order-service deployment/helm/order-service
+kubectl apply -f k8s/
 ```
 
-## Architecture Overview
+* With skaffold
 
-The service follows a layered architecture:
-
-1. **API Layer**: HTTP request handling, validation, and response formatting
-2. **Service Layer**: Business logic and operations
-3. **Data Layer**: MongoDB models and database interactions
-
-## Security Measures
-
-- JWT authentication
-- Helmet for HTTP headers security
-- CORS configuration
-- Rate limiting
-- Input validation
-- Error handling without exposing internals
+```bash
+skaffold dev -p minikube
+```
 
 ## Contributing
 
