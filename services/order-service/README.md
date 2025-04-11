@@ -78,27 +78,27 @@ order-service/
 
 ### Installation
 
-1. Clone the repository:
-   ```bash
-git clone https://github.com/nntran/cloud-native-samples.git
-cd cloud-native-samples/services/order-service
-   ```
+1. Clone the repository
+    ```bash
+    git clone https://github.com/nntran/cloud-native-samples.git
+    cd cloud-native-samples/services/order-service
+    ```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+    ```bash
+    npm install
+    ```
 
 3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+    ```bash
+    cp .env.example .env
+    # Edit .env with your configuration
+    ```
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+3. Start the development server:
+    ```bash
+    npm run dev
+    ```
 
 ### Running with Docker
 
