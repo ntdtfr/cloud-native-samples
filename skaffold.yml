@@ -4,10 +4,20 @@ metadata:
   name: cloud-native-samples
 
 requires:
-  - configs: ["order-service"]
-    path: services/order-service
+  - configs: ["middlewares"]
+    path: ./infrastructure
     activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
-      - name: cloud
-        activatedBy: [gcp]
+
+  - configs: ["product-service"]
+    path: ./services/product-service
+    activeProfiles: *profiles
+
+  - configs: ["order-service"]
+    path: ./services/order-service
+    activeProfiles: *profiles
+
+  # - configs: ["user-service"]
+  #   path: ./services/user-service
+  #   activeProfiles: *profiles

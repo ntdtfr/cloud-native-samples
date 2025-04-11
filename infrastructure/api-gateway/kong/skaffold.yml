@@ -1,14 +1,7 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: order-service
-
-requires:
-  - configs: ["mongodb"]
-    path: ../../infrastructure/databases/mongodb
-    activeProfiles:
-      - name: minikube
-        activatedBy: [minikube]
+  name: kong
 
 profiles:
   - name: minikube
@@ -18,7 +11,7 @@ profiles:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: order-service
+        - image: kong
           context: .
           docker:
             dockerfile: Dockerfile
@@ -33,6 +26,6 @@ profiles:
         - ./k8s/*.yml
     portForward:
       - resourceType: service
-        resourceName: order-service
+        resourceName: kong
         port: 8080
-        localPort: 8480
+        localPort: 8180

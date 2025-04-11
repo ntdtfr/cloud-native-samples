@@ -1,36 +1,133 @@
 services:
+
+  product-service:
+    container_name: product-service
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+      target: development
+      args:
+        - GO_VERSION=1.23.3
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - MONGODB_URI=mongodb://mongodb:27017
+      - MONGODB_DATABASE=product
+      - REDIS_ADDRESS=redis:6379
+      - RABBITMQ_URI=amqp://dev:dev@rabbitmq:5672/
+      - RABBITMQ_EXCHANGE=product_exchange
+      - AUTH_JWT_SECRET=your-secret-key
+      - LOG_LEVEL=debug
+    restart: unless-stopped
+    networks:
+      - cns-network
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+
   order-service:
+    container_name: order-service
     build:
       context: ./services/order-service
       dockerfile: Dockerfile
       target: development
-    #container_name: order-service
     ports:
       - "8080:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - MONGODB_URI=mongodb://mongo:27017/order
+      - MONGODB_URI=mongodb://mongodb:27017/order
     volumes:
       - ./services/order-service/src:/opt/app/src
-      - ./services/order-service/docs:/opt/app/docs
-    depends_on:
-      - mongo
     networks:
-      - microservices-network
+      - cns-network
+    depends_on:
+      - mongodb
+      # - redis
+      # - rabbitmq
 
-  mongo:
-    image: mongo:5.0
+  keycloak:
+    container_name: keycloak
+    build:
+      context: ./infrastructure/security/keycloak
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=postgres
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak
+    ports:
+      - 8080:8080
+      - 8443:8443
+    networks:
+      - cns-network
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cns-network
+
+  mongodb:
+    image: mongo:6.0
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - mongodb-data:/data/db
     networks:
-      - microservices-network
+      - cns-network
 
-networks:
-  microservices-network:
-    driver: bridge
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - cns-network
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI port
+    environment:
+      - RABBITMQ_DEFAULT_USER=dev
+      - RABBITMQ_DEFAULT_PASS=dev
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - cns-network
 
 volumes:
-  mongo-data:
+  postgres-data:
+    driver: local
+  mongodb-data:
+  redis_data:
+  rabbitmq_data:
+
+networks:
+  cns-network:
+    name: cloud-native-samples-network
+    driver: bridge

@@ -1,0 +1,19 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: middlewares
+
+requires:
+  - configs: ["databases"]
+    path: databases
+    activeProfiles: &profiles
+      - name: minikube
+        activatedBy: [minikube]
+
+  - configs: ["security"]
+    path: security
+    activeProfiles: *profiles
+
+  - configs: ["api-gateway"]
+    path: api-gateway
+    activeProfiles: *profiles

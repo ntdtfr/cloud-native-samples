@@ -12,7 +12,7 @@ const orderRoutes = require('./api/routes/orderRoutes');
 const logger = require('./utils/logger');
 
 // Load OpenAPI specification
-const swaggerDocument = YAML.load(path.join(__dirname, '../docs/api/openapi.yml'));
+const swaggerDocument = YAML.load(path.join(__dirname, './api/openapi.yml'));
 
 const app = express();
 

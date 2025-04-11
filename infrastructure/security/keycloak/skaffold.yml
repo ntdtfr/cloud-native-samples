@@ -1,24 +1,22 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: order-service
+  name: keycloak
 
 requires:
-  - configs: ["mongodb"]
-    path: ../../infrastructure/databases/mongodb
-    activeProfiles:
+  - configs: ["postgres"]
+    path: ../../databases/postgres
+    activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
 
 profiles:
   - name: minikube
-    activation:
-      - kubeContext: minikube
     build:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: order-service
+        - image: keycloak
           context: .
           docker:
             dockerfile: Dockerfile
@@ -26,13 +24,15 @@ profiles:
       local:
         useBuildkit: true
         concurrency: 0
-    deploy:
+    deploy: &deploy
       kubectl: {}
-    manifests:
+    manifests: &manifests
       rawYaml:
         - ./k8s/*.yml
-    portForward:
+    portForward: &portForward
       - resourceType: service
-        resourceName: order-service
+        resourceName: keycloak
         port: 8080
-        localPort: 8480
+        localPort: 8280
+    activation:
+      - kubeContext: minikube

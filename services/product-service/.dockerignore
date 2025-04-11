@@ -1,0 +1,90 @@
+# Go build artifacts
+/bin/
+/pkg/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Build cache
+/.cache/
+.go/
+
+# IDE specific files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+.DS_Store
+.project
+.classpath
+.settings/
+*.sublime-*
+
+# Version control
+/.git/
+/.gitignore
+/.github/
+/.gitlab/
+/.gitlab-ci.yml
+/.gitattributes
+
+# Environment files
+/.env
+/.env.*
+!/.env.example
+*.env
+
+# Temporary files
+/tmp/
+/temp/
+*.tmp
+
+# Documentation
+/README.md
+/CHANGELOG.md
+/LICENSE
+/docs/
+*.md
+!README-docker.md
+
+# Docker related
+/Dockerfile*
+/docker-compose*
+/.dockerignore
+
+# Testing
+*_test.go
+/coverage/
+/coverage.out
+/coverage.html
+/mocks/
+
+# Debug files
+/debug
+/debug.test
+
+# Project specific
+/logs/
+*.log
+/data/
+/config.local.yaml
+/config.dev.yaml
+
+# CI/CD
+/.travis.yml
+/.circleci/
+/.github/workflows/
+
+# Tools and misc
+/tools/
+/scripts/
+*.bak

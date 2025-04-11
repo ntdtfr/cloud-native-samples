@@ -20,9 +20,9 @@ spec:
     spec:
       containers:
       - name: order-service
-        image: order-service:latest
+        image: order-service
         ports:
-        - containerPort: 3000
+          - containerPort: 3000
         env:
         - name: NODE_ENV
           value: development
@@ -55,7 +55,7 @@ spec:
           httpGet:
             path: /                # The path to check for the readiness probe
             port: 3000             # The port to check on
-          initialDelaySeconds: 5   # Wait this many seconds before starting the probe
+          initialDelaySeconds: 10  # Wait this many seconds before starting the probe
           periodSeconds: 5         # Check the probe every 5 seconds
         volumeMounts:
         - name: config-volume
@@ -64,16 +64,3 @@ spec:
       - name: config-volume
         configMap:
           name: order-service-config
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: order-service
-spec:
-  selector:
-    app: order-service
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
-  type: ClusterIP
