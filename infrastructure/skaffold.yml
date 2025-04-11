@@ -1,0 +1,27 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: middlewares
+
+requires:
+  - configs: ["api-gateway"]
+    path: api-gateway/kong
+    activeProfiles: &profiles
+      - name: minikube
+        activatedBy: [minikube]
+
+  - configs: ["keycloak"]
+    path: security/keycloak
+    activeProfiles: *profiles
+
+  - configs: ["redis"]
+    path: databases/redis
+    activeProfiles: *profiles
+
+  - configs: ["mongodb"]
+    path: databases/mongodb
+    activeProfiles: *profiles
+
+  - configs: ["postgres"]
+    path: databases/postgres
+    activeProfiles: *profiles

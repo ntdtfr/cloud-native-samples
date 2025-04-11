@@ -1,14 +1,18 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: order-service
+  name: product-service
 
 requires:
   - configs: ["mongodb"]
     path: ../../infrastructure/databases/mongodb
-    activeProfiles:
+    activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
+
+  - configs: ["redis"]
+    path: ../../infrastructure/databases/redis
+    activeProfiles: *profiles
 
 profiles:
   - name: minikube
@@ -18,7 +22,7 @@ profiles:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: order-service
+        - image: product-service
           context: .
           docker:
             dockerfile: Dockerfile
@@ -33,6 +37,6 @@ profiles:
         - ./k8s/*.yml
     portForward:
       - resourceType: service
-        resourceName: order-service
+        resourceName: product-service
         port: 8080
-        localPort: 8480
+        localPort: 8380

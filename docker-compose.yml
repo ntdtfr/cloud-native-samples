@@ -19,13 +19,13 @@ services:
       - RABBITMQ_EXCHANGE=product_exchange
       - AUTH_JWT_SECRET=your-secret-key
       - LOG_LEVEL=debug
+    restart: unless-stopped
+    networks:
+      - microservices-network
     depends_on:
       - mongodb
       - redis
       - rabbitmq
-    restart: unless-stopped
-    networks:
-      - microservices-network
 
   order-service:
     build:
@@ -41,12 +41,12 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/order
     volumes:
       - ./services/order-service/src:/opt/app/src
+    networks:
+      - microservices-network
     depends_on:
       - mongodb
       # - redis
       # - rabbitmq
-    networks:
-      - microservices-network
 
   mongodb:
     image: mongo:6.0
@@ -82,11 +82,11 @@ services:
     networks:
       - microservices-network
 
-networks:
-  microservices-network:
-    driver: bridge
-
 volumes:
   mongodb-data:
   redis_data:
   rabbitmq_data:
+
+networks:
+  microservices-network:
+    driver: bridge
