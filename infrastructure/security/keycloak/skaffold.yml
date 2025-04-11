@@ -32,7 +32,7 @@ profiles:
     portForward: &portForward
       - resourceType: service
         resourceName: keycloak
-        port: 9000
+        port: 8080
         localPort: 8280
     activation:
       - kubeContext: minikube

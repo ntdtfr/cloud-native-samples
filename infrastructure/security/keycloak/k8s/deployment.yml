@@ -22,55 +22,60 @@ spec:
             [
               "sh",
               "-c",
-              "until pg_isready -h postgres-postgresql -p 5432; do echo waiting for database; sleep 2; done;",
+              "until pg_isready -h postgres -p 5432; do echo waiting for database; sleep 2; done;",
             ]
       containers:
-        - name: keycloak
-          image: keycloak
-          #args: ["--import-realm"]
-          env:
-            # See https://www.keycloak.org/server/all-config
-            - name: KEYCLOAK_ADMIN
-              value: "admin"
-            - name: KEYCLOAK_ADMIN_PASSWORD
-              value: "admin"
-            - name: KC_BOOTSTRAP_ADMIN_USERNAME
-              value: "admin"
-            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
-              value: "admin"
-            # DATABASE
-            - name: KC_DB
-              value: "postgres"
-            # - name: KC_DB_URL
-            #   value: "jdbc:postgresql://postgres-postgresql.default.svc.cluster.local/keycloak"
-            - name: KC_DB_URL_HOST
-              value: "postgres-postgresql"
-            - name: KC_DB_URL_PORT
-              value: "5432"
-            - name: KC_DB_URL_DATABASE
-              value: "keycloak"
-            - name: KC_DB_USERNAME
-              value: "keycloak"
-            - name: KC_DB_PASSWORD
-              value: "keycloak"
-            - name: KC_HTTP_PORT
-              value: "9000"
-            # - name: KC_HOSTNAME_STRICT
-            #   value: "false"
-            # - name: KC_HOSTNAME_STRICT_BACKCHANNEL
-            #   value: "false"
-            # Enables the HTTP listener
-            - name: KC_HTTP_ENABLED
-              value: "true"
-            # By default, the new Quarkus distribution removes /auth from the context-path.
-            # The following parameter will re-introduce the /auth
-            - name: KC_HTTP_RELATIVE_PATH
-              value: "/auth"
-          # ports:
-          #   - name: http
-          #     containerPort: 9000
-          # readinessProbe:
-          #   httpGet:
-          #     # If the KC_HTTP_RELATIVE_PATH is disable, remove the /auth path from /auth/realms/master
-          #     path: /auth/realms/master
-          #     port: 9000
+      - name: keycloak
+        image: keycloak
+        #args: ["start-dev"]
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
+        env:
+        - name: KEYCLOAK_ADMIN
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secret
+              key: admin-user
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: keycloak-secret
+              key: admin-password
+        - name: KC_DB
+          value: "postgres"
+        - name: KC_DB_URL
+          value: "jdbc:postgresql://postgres:5432/keycloak"
+        - name: KC_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: username
+        - name: KC_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 90
+          timeoutSeconds: 5
+          periodSeconds: 15
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 120
+          timeoutSeconds: 5
+          periodSeconds: 30

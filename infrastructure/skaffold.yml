@@ -4,24 +4,16 @@ metadata:
   name: middlewares
 
 requires:
-  - configs: ["api-gateway"]
-    path: api-gateway/kong
+  - configs: ["databases"]
+    path: databases
     activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
 
-  - configs: ["keycloak"]
-    path: security/keycloak
+  - configs: ["security"]
+    path: security
     activeProfiles: *profiles
 
-  - configs: ["redis"]
-    path: databases/redis
-    activeProfiles: *profiles
-
-  - configs: ["mongodb"]
-    path: databases/mongodb
-    activeProfiles: *profiles
-
-  - configs: ["postgres"]
-    path: databases/postgres
+  - configs: ["api-gateway"]
+    path: api-gateway
     activeProfiles: *profiles

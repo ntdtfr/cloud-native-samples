@@ -1,7 +1,7 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: kong
+  name: krakend
 
 profiles:
   - name: minikube
@@ -11,7 +11,7 @@ profiles:
       tagPolicy:
         sha256: {}
       artifacts:
-        - image: kong
+        - image: krakend
           context: .
           docker:
             dockerfile: Dockerfile
@@ -26,6 +26,6 @@ profiles:
         - ./k8s/*.yml
     portForward:
       - resourceType: service
-        resourceName: kong
+        resourceName: krakend
         port: 8080
         localPort: 8180
