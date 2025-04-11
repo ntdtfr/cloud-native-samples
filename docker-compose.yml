@@ -1,13 +1,13 @@
 services:
 
   product-service:
+    container_name: product-service
     build:
       context: ./services/product-service
       dockerfile: Dockerfile
       target: development
       args:
         - GO_VERSION=1.23.3
-    container_name: product-service
     ports:
       - "8080:8080"
     environment:
@@ -21,18 +21,18 @@ services:
       - LOG_LEVEL=debug
     restart: unless-stopped
     networks:
-      - microservices-network
+      - cns-network
     depends_on:
       - mongodb
       - redis
       - rabbitmq
 
   order-service:
+    container_name: order-service
     build:
       context: ./services/order-service
       dockerfile: Dockerfile
       target: development
-    container_name: order-service
     ports:
       - "8080:3000"
     environment:
@@ -42,11 +42,49 @@ services:
     volumes:
       - ./services/order-service/src:/opt/app/src
     networks:
-      - microservices-network
+      - cns-network
     depends_on:
       - mongodb
       # - redis
       # - rabbitmq
+
+  keycloak:
+    container_name: keycloak
+    build:
+      context: ./infrastructure/security/keycloak
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=postgres
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak
+    ports:
+      - 8080:8080
+      - 8443:8443
+    networks:
+      - cns-network
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak
+      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - cns-network
 
   mongodb:
     image: mongo:6.0
@@ -56,7 +94,7 @@ services:
     volumes:
       - mongodb-data:/data/db
     networks:
-      - microservices-network
+      - cns-network
 
   redis:
     image: redis:7.0-alpine
@@ -66,7 +104,7 @@ services:
     volumes:
       - redis_data:/data
     networks:
-      - microservices-network
+      - cns-network
 
   rabbitmq:
     image: rabbitmq:3.11-management
@@ -80,13 +118,16 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - microservices-network
+      - cns-network
 
 volumes:
+  postgres-data:
+    driver: local
   mongodb-data:
   redis_data:
   rabbitmq_data:
 
 networks:
-  microservices-network:
+  cns-network:
+    name: cloud-native-samples-network
     driver: bridge
