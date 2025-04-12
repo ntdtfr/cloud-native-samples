@@ -29,25 +29,8 @@ cloud-native-samples/
 │   └── CONTRIBUTION.md
 ├── infrastructure
 │   ├── api-gateway          # API Gateway configuration
-│   │   ├── kong
-│   │   ├── krakend
 │   │   └── skaffold.yml
-│   ├── databases            # Databases configuration
-│   │   ├── duckdb
-│   │   ├── mongodb
-│   │   ├── postgres
-│   │   ├── redis
-│   │   └── skaffold.yml
-│   ├── helm                 # Helm charts for deployment
-│   │   └── order-service
-│   ├── ingress              # Kubernetes ingress configuration
-│   ├── message-brokers      # Message brokers configuration
-│   │   └── rabbitmq
-│   ├── monitoring           # Monitoring and logging configuration
-│   ├── security             # Security configuration
-│   │   ├── keycloak         
-│   │   └── skaffold.yml
-│   ├── skaffold.yml
+│   ├── skaffold.yml         # Infrastructure configuration (api gateway, keycloak, ...)
 │   └── terraform
 ├── services
 │   ├── user-service         # Java/Spring Boot
@@ -133,7 +116,11 @@ skaffold run -p minikube
 * Build and deploy some specific services or groups of services to Minikube
 
 ```bash
-skaffold dev -p minikube -m api-gateway,security,order-service
+skaffold dev -p minikube -m infrastructure,product-service,order-service
+
+# or only components for a specific service (order-service)
+
+skaffold dev -p minikube -m api-gateway,keycloak,mongodb,order-service
 ```
 
 ## Contributing

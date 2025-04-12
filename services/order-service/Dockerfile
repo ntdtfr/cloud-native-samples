@@ -39,7 +39,7 @@ ENV NODE_ENV=development
 USER node
 
 # Install application modules
-RUN npm install && \
+RUN npm ci && \
   npm cache clean --force
 
 # Expose port on the host
@@ -66,4 +66,5 @@ RUN npm ci --only=production && \
 EXPOSE $NODE_PORT
 
 # Run the application
-CMD ["node", "src/server.js"]
+# CMD ["node", "src/server.js"]
+CMD ["npm", "run", "start"]

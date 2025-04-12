@@ -1,17 +1,41 @@
 apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
-  name: middlewares
+  name: infrastructure
 
 requires:
-  - configs: ["databases"]
-    path: databases
+  - configs: ["mongodb"]
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: databases/mongodb/skaffold.yaml
+      ref: main
+      sync: true
     activeProfiles: &profiles
       - name: minikube
         activatedBy: [minikube]
 
-  - configs: ["security"]
-    path: security
+  - configs: ["redis"]
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: databases/redis/skaffold.yaml
+      ref: main
+      sync: true
+    activeProfiles: *profiles
+
+  - configs: ["rabbitmq"]
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: message-brokers/rabbitmq/skaffold.yaml
+      ref: main
+      sync: true
+    activeProfiles: *profiles
+
+  - configs: ["keycloak"]
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: security/keycloak/skaffold.yaml
+      ref: main
+      sync: true
     activeProfiles: *profiles
 
   - configs: ["api-gateway"]

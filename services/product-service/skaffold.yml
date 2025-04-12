@@ -3,17 +3,6 @@ kind: Config
 metadata:
   name: product-service
 
-requires:
-  - configs: ["mongodb"]
-    path: ../../infrastructure/databases/mongodb
-    activeProfiles: &profiles
-      - name: minikube
-        activatedBy: [minikube]
-
-  - configs: ["redis"]
-    path: ../../infrastructure/databases/redis
-    activeProfiles: *profiles
-
 profiles:
   - name: minikube
     activation:
@@ -27,6 +16,11 @@ profiles:
           docker:
             dockerfile: Dockerfile
             target: development
+          sync:
+            infer: ["**/*"]
+            # manual:
+            # - src: "src/**/*"
+            #   dest: "/opt/app/"
       local:
         useBuildkit: true
         concurrency: 0
