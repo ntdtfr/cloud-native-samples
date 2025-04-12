@@ -22,7 +22,7 @@ spec:
             [
               "sh",
               "-c",
-              "until pg_isready -h postgres -p 5432; do echo waiting for database; sleep 2; done;",
+              "until pg_isready -h postgres-postgresql -p 5432; do echo waiting for database; sleep 2; done;",
             ]
       containers:
       - name: keycloak
@@ -34,30 +34,51 @@ spec:
         - name: https
           containerPort: 8443
         env:
-        - name: KEYCLOAK_ADMIN
+        # Deprecated
+        # - name: KEYCLOAK_ADMIN
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: keycloak-admin-secret
+        #       key: admin-user
+        # - name: KEYCLOAK_ADMIN_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: keycloak-admin-secret
+        #       key: admin-password
+        - name: KC_BOOTSTRAP_ADMIN_USERNAME
           valueFrom:
             secretKeyRef:
-              name: keycloak-secret
+              name: keycloak-admin-secret
               key: admin-user
-        - name: KEYCLOAK_ADMIN_PASSWORD
+        - name: KC_BOOTSTRAP_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: keycloak-secret
+              name: keycloak-admin-secret
               key: admin-password
         - name: KC_DB
           value: "postgres"
         - name: KC_DB_URL
-          value: "jdbc:postgresql://postgres:5432/keycloak"
+          value: "jdbc:postgresql://postgres-postgresql.default.svc.cluster.local:5432/keycloak"
         - name: KC_DB_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: username
+          value: "postgres"
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: keycloak-db-secret
+          #     key: username
         - name: KC_DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: password
+          value: "password"
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: keycloak-db-secret
+          #     key: password
+        - name: KC_HTTP_PORT
+          value: "8080"
+        - name: KC_HOSTNAME_STRICT
+          value: "false"
+        # - name: KC_HOSTNAME_STRICT_BACKCHANNEL
+        #   value: "false"
+        - name: KC_HTTP_RELATIVE_PATH
+          value: "/auth"
         resources:
           limits:
             cpu: "1000m"

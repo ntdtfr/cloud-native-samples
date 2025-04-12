@@ -26,18 +26,22 @@ spec:
         env:
         - name: NODE_ENV
           value: development
-        - name: PORT
-          value: "3000"
+        - name: LOG_LEVEL
+          value: info
+        - name: CORS_ORIGIN
+          value: "*"
         - name: MONGODB_URI
           valueFrom:
             secretKeyRef:
-              name: order-service-secrets
+              name: order-service-secret
               key: mongodb-uri
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
-              name: order-service-secrets
+              name: order-service-secret
               key: jwt-secret
+        - name: JWT_EXPIRES_IN
+          value: 1d
         resources:
           limits:
             memory: "256Mi"  # Maximum memory allowed
