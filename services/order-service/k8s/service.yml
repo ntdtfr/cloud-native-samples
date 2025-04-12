@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: order-service
 spec:
+  type: ClusterIP
   selector:
     app: order-service
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: ClusterIP
+

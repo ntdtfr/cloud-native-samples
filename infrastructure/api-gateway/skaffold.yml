@@ -5,11 +5,38 @@ metadata:
 
 requires:
   - configs: ["krakend"]
-    path: krakend
-    activeProfiles: &profiles
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: api-gateway/krakend/skaffold.yaml
+      ref: main
+      sync: true
+    activeProfiles:
       - name: minikube
         activatedBy: [minikube]
 
-  # - configs: ["kong"]
-  #   path: kong
-  #   activeProfiles: *profiles
+profiles:
+  - name: minikube
+    activation:
+      - kubeContext: minikube
+    # build:
+    #   tagPolicy:
+    #     sha256: {}
+    #   artifacts:
+    #     - image: krakend
+    #       context: .
+    #       docker:
+    #         dockerfile: Dockerfile
+    #         target: development
+    #   local:
+    #     useBuildkit: true
+    #     concurrency: 0
+    deploy:
+      kubectl: {}
+    manifests:
+      rawYaml:
+        - ./k8s/*.yml
+    # portForward:
+    #   - resourceType: service
+    #     resourceName: krakend
+    #     port: 8080
+    #     localPort: 8180
