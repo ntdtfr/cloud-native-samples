@@ -43,7 +43,7 @@ jobs:
       run: npm ci --only=production
 
     - name: Run tests
-      run: npm test
+      run: npm run test
 
     - name: Run linting
       run: npm run lint
