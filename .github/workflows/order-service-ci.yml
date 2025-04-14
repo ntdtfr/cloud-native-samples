@@ -36,13 +36,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '${env.NODE_VERSION}'
-        cache: 'npm'
+        node-version: ${{ env.NODE_VERSION }}
+        cache: npm
 
     - name: Change working directory
       run: |
@@ -57,14 +57,21 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Run tests
-      run: npm run test
-
     - name: Run linting
       run: npm run lint
 
+    - name: Run tests
+      run: npm run test
+
     - name: Build application
       run: npm run build
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
+        retention-days: 1
 
   security-scan:
     runs-on: ubuntu-latest
