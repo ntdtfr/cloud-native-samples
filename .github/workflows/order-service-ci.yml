@@ -23,6 +23,14 @@ on:
       - services/order-service/Dockerfile
       - .github/workflows/order-service-ci.yml
 
+# Environment variables available to all jobs and steps in this workflow
+env:
+  SOURCE_DIR: services/order-service
+  NODE_VERSION: 22
+  DOCKER_REGISTRY: docker.io  # ghcr.io
+  DOCKER_IMAGE_NAME: ntdtfr/order-service
+  DOCKER_TARGET: production
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -33,11 +41,18 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '22'
-        cache: 'npm'
+        node-version: ${env.NODE_VERSION}
+        cache: npm
+
+    - name: Change working directory
+      run: |
+        cd ${{ env.SOURCE_DIR }}
+        pwd
 
     - name: Install npm version 11.3.0 and babel CLI
-      run: npm install -g npm@11.3.0 && npm install -g babel-cli
+      run: |
+        npm install -g npm@11.3.0
+        npm install -g babel-cli
 
     - name: Install dependencies
       run: npm ci
@@ -87,10 +102,12 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
+        file: services/order-service/Dockerfile
+        target: production
         push: true
         tags: |
-          ntdtfr/order-service:latest
-          ntdtfr/order-service:${{ github.sha }}
+          ${{ env.DOCKER_IMAGE_NAME }}:latest
+          ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
