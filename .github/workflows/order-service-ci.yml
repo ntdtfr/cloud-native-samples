@@ -62,10 +62,11 @@ jobs:
     #   run: skaffold test --file-output=test.json
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build
         path: build.json
+        retention-days: 1
 
   security-scan:
     runs-on: ubuntu-latest
