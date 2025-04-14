@@ -160,14 +160,6 @@ npm test
 npm run test:coverage
 ```
 
-## API Documentation
-
-The API is documented using OpenAPI/Swagger. After starting the server, access the documentation at:
-
-```
-http://localhost:3000/docs
-```
-
 ## Deployment
 
 ### Docker Deployment
@@ -189,6 +181,14 @@ kubectl apply -f k8s/
 
 ```bash
 skaffold dev -p minikube
+```
+
+## API Documentation
+
+The API is documented using OpenAPI/Swagger. After starting the server, access the documentation at:
+
+```
+http://localhost:8001/docs
 ```
 
 ## Contributing

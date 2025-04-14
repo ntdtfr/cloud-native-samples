@@ -140,6 +140,14 @@ skaffold dev -p minikube -m mongodb,order-service
 skaffold dev -p minikube -m api-gateway,keycloak,mongodb,order-service
 ```
 
+## API Documentation
+
+The API is documented using OpenAPI/Swagger. After starting the server, access the documentation at:
+
+```
+http://localhost:8001/docs
+```
+
 ## Contributing
 
 1. Fork the repository
