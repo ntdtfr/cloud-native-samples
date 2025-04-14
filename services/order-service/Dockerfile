@@ -34,6 +34,12 @@ RUN git init
 # Copy source code
 COPY . .
 
+# # Run linting
+# RUN npm run lint
+
+# # Run tests
+# RUN npm run test
+
 # # Run prepare script which installs Husky
 # RUN npm run prepare
 

@@ -18,7 +18,8 @@ const { formatResponse } = require('../../utils/responseFormatter');
 exports.createOrder = async (req, res, next) => {
   try {
     const customerId = req.user.id; // Extracted from JWT token
-    const orderData = { ...req.body, customerId };
+    const body = req.body;
+    const orderData = { body, customerId };
 
     const order = await orderService.createOrder(orderData);
 
