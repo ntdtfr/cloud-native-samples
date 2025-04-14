@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     tags: [ v* ]
     # paths-ignore:
     #   - '**.md'
@@ -15,7 +15,7 @@ on:
       - services/order-service/Dockerfile
       - .github/workflows/order-service-ci.yml
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     # paths-ignore:
     #   - '**.md'
     paths:
