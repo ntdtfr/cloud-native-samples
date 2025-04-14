@@ -147,8 +147,8 @@ jobs:
       with:
         platforms: ${{ matrix.platform }}
         builder: ${{ steps.buildx.outputs.name }}
-        context: ./${{ env.SOURCE_DIR }}
-        file: Dockerfile
+        context: ${{ env.SOURCE_DIR }}
+        file:  ${{ env.SOURCE_DIR }}/Dockerfile
         target: production
         build-args: |
           NODE_VERSION=${{ env.NODE_VERSION }}
@@ -156,6 +156,19 @@ jobs:
           GITHUB_EMAIL=${{ secrets.GH_EMAIL }}
         tags: |
           ${{ env.DOCKER_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}
+        labels:
+          org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+          org.opencontainers.image.authors=${{ steps.meta.outputs.authors }}
+          org.opencontainers.image.url=${{ steps.meta.outputs.url }}
+          org.opencontainers.image.source=${{ steps.meta.outputs.source }}
+          org.opencontainers.image.version=${{ steps.meta.outputs.version }}
+          org.opencontainers.image.revision=${{ steps.meta.outputs.revision }}
+          org.opencontainers.image.licenses=${{ steps.meta.outputs.licenses }}
+          org.opencontainers.image.title=Order Service
+          org.opencontainers.image.description=Order Service for e-commerce platform
+          org.opencontainers.image.vendor=ntdt.fr
+          org.opencontainers.image.created=${{ steps.meta.outputs.created }}
+          org.opencontainers.image.title=Keycloak
         cache-from: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
         cache-to: type=gha,scope=build-${{ env.PLATFORM_PAIR }}
         outputs: type=image,push-by-digest=true,name-canonical=true,push=true
