@@ -46,6 +46,7 @@ jobs:
 
     - name: Change working directory
       run: |
+        pwd
         cd ${{ env.SOURCE_DIR }}
         pwd
 
