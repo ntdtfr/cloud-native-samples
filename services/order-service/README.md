@@ -89,21 +89,55 @@ order-service/
 
 2. Install dependencies:
     ```bash
-npm install --save-dev @babel/core @babel/preset-env @babel/plugin-proposal-class-properties @babel/plugin-proposal-optional-chaining @babel/plugin-proposal-nullish-coalescing-operator @babel/plugin-syntax-dynamic-import @babel/plugin-transform-runtime core-js@3
+    npm install --save-dev @babel/core @babel/preset-env @babel/plugin-proposal-class-properties @babel/plugin-proposal-optional-chaining @babel/plugin-proposal-nullish-coalescing-operator @babel/plugin-syntax-dynamic-import @babel/plugin-transform-runtime core-js@3
+
+    npm install --save @babel/runtime
 
     npm install
     ```
 
-3. Set up environment variables:
+1. Set up environment variables:
     ```bash
     cp .env.example .env
     # Edit .env with your configuration
     ```
 
-3. Start the development server:
+2. Start the development server:
     ```bash
     npm run start:dev
     ```
+
+### Commands for development and build options
+
+#### Build Commands:
+
+- `clean`: Removes the previous build directory
+- `prebuild`: Automatically runs before the build command
+- `build`: Compiles source files using Babel and outputs to the dist directory
+- `build:prod`: Production build with NODE_ENV set to production
+
+#### Run Commands:
+
+- `start`: Runs the built application
+- `start:dev`: Runs the application in development mode with hot reloading
+
+#### Quality Assurance:
+
+- `lint`: Checks code quality with ESLint
+- `lint:fix`: Automatically fixes ESLint issues when possible
+- `test`: Runs Jest tests
+- `test:watch`: Runs tests in watch mode for development
+- `test:coverage`: Generates test coverage reports
+
+#### Git Hooks:
+
+- `prepare`: Sets up Husky for git hooks
+
+To use these scripts, you'll need these dependencies:
+
+```bash
+npm install --save-dev rimraf babel-cli nodemon jest eslint husky
+```
 
 ### Running with Docker
 

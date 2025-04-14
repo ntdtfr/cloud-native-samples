@@ -3,6 +3,17 @@ kind: Config
 metadata:
   name: order-service
 
+requires:
+  - configs: ["mongodb"]
+    git:
+      repo: https://github.com/ntdtfr/tools.git
+      path: databases/mongodb/skaffold.yaml
+      ref: main
+      sync: true
+    activeProfiles: &profiles
+      - name: minikube
+        activatedBy: [minikube]
+
 profiles:
   - name: minikube
     activation:
@@ -19,8 +30,12 @@ profiles:
           docker:
             dockerfile: Dockerfile
             target: production
-            cacheFrom:
-              - order-service
+            buildArgs:
+              NODE_VERSION: "22"
+              GITHUB_EMAIL: "{{ .GITHUB_EMAIL }}"
+              GITHUB_USER: "{{ .GITHUB_USER }}"
+            # cacheFrom:
+            #   - order-service
           # sync:
           #   infer: ["**/*"]
           #   # manual:

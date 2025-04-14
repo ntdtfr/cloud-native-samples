@@ -6,6 +6,10 @@ ARG NODE_VERSION=22
 ## Stage 1: Development dependencies and build
 FROM node:${NODE_VERSION}-alpine AS builder
 
+# Github user and email
+ARG GITHUB_EMAIL
+ARG GITHUB_USER
+
 # Install git for Husky
 RUN apk add --no-cache git
 
@@ -15,9 +19,8 @@ WORKDIR /opt/app
 # Add package files and install dependencies
 COPY package.json package-lock.json ./
 
-# Install npm version 11.3.0
-RUN npm install -g npm@11.3.0 && \
-  npm install -g babel-cli
+# Install development dependencies
+RUN npm install -g npm@11.3.0 rimraf babel-cli jest eslint husky
 
 # Install all dependencies including dev dependencies
 # Use ci instead of install for more reliable builds
@@ -25,8 +28,8 @@ RUN npm ci
 
 # Set up Git config to avoid Husky errors
 RUN git config --global init.defaultBranch main && \
-    git config --global user.email "ntran@ntdt.fr" && \
-    git config --global user.name "nntran"
+    git config --global user.email ${GITHUB_EMAIL} && \
+    git config --global user.name ${GITHUB_USER}
 
 # Initialize git repository to allow Husky installation
 RUN git init
