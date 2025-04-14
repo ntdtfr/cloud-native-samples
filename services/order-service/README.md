@@ -97,7 +97,7 @@ order-service/
 
 3. Start the development server:
     ```bash
-    npm run dev
+    npm run start:dev
     ```
 
 ### Running with Docker
@@ -126,7 +126,7 @@ npm run test:coverage
 The API is documented using OpenAPI/Swagger. After starting the server, access the documentation at:
 
 ```
-http://localhost:8080/docs
+http://localhost:3000/docs
 ```
 
 ## Deployment
@@ -135,7 +135,7 @@ http://localhost:8080/docs
 
 ```bash
 docker build -t order-service .
-docker run -p 8080:3000 --env-file .env order-service
+docker run -p 8001:3000 --env-file .env order-service
 ```
 
 ### Kubernetes Deployment

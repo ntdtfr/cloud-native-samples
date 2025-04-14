@@ -1,5 +1,55 @@
 services:
-
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    restart: always
+    command:
+      - --api=true #added by me
+      - --api.dashboard=true #added by me
+      - --entrypoints.web.address=:8080
+      - --entrypoints.websecure.address=:8043
+      - --providers.docker=true
+      - --log.level=ERROR
+      # - --certificatesresolvers.leresolver.acme.httpchallenge=true
+      # - --certificatesresolvers.leresolver.acme.email=MY-EMAIL
+      # - --certificatesresolvers.leresolver.acme.storage=/var/acme.json
+      # - --certificatesresolvers.leresolver.acme.httpchallenge.entrypoint=web
+    ports:
+      - "8080:80"
+      - "8043:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./acme.json:/acme.json"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.rule=Host(`traefik.dev.local`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      # - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.dev.local`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.middlewares=auth"
+      - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/"
+    networks:
+      - cns-network
+  portainer:
+    image: portainer/portainer-ce:latest
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    labels:
+      # Frontend
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`portainer.dev.local`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=9000"
+      - "traefik.http.routers.frontend.service=frontend"
+      # - "traefik.http.routers.frontend.tls.certresolver=leresolver"
+    networks:
+      - cns-network
   product-service:
     container_name: product-service
     build:
@@ -9,7 +59,7 @@ services:
       args:
         - GO_VERSION=1.23.3
     ports:
-      - "8080:8080"
+      - "9001:8080"
     environment:
       - SERVER_PORT=8080
       - MONGODB_URI=mongodb://mongodb:27017
@@ -34,7 +84,7 @@ services:
       dockerfile: Dockerfile
       target: development
     ports:
-      - "8080:3000"
+      - "9002:3000"
     environment:
       - NODE_ENV=development
       - PORT=3000
@@ -50,35 +100,46 @@ services:
 
   keycloak:
     container_name: keycloak
-    build:
-      context: ./infrastructure/security/keycloak
-      dockerfile: Dockerfile
-      target: development
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_DB=postgres
-      - KC_DB_URL_HOST=postgres
-      - KC_DB_URL_DATABASE=keycloak
-      - KC_DB_USERNAME=keycloak
-      - KC_DB_PASSWORD=keycloak
+    image: ntdtfr/keycloak:26.1.4
+    restart: unless-stopped
+    env_file:
+      - .env
+    # environment:
+    #   - KEYCLOAK_ADMIN=admin
+    #   - KEYCLOAK_ADMIN_PASSWORD=admin
+    #   - KC_DB=postgres
+    #   - KC_DB_URL_HOST=postgres
+    #   - KC_DB_URL_DATABASE=postgres
+    #   - KC_DB_USERNAME=postgres
+    #   - KC_DB_PASSWORD=password
     ports:
-      - 8080:8080
-      - 8443:8443
+      - 8280:8080
+      - 8243:8443
     networks:
       - cns-network
     depends_on:
       - postgres
-
+    labels:
+      # Frontend
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`keycloak.dev.local`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"
+      - "traefik.http.routers.frontend.service=frontend"
+      # - "traefik.http.routers.frontend.tls.certresolver=leresolver"
   postgres:
     container_name: postgres
     image: postgres:13-alpine
-    environment:
-      - POSTGRES_DB=keycloak
-      - POSTGRES_USER=keycloak
-      - POSTGRES_PASSWORD=keycloak
-      - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
-      - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
+    restart: unless-stopped
+    env_file:
+      - .env
+    # environment:
+    #   - POSTGRES_HOST=postgres
+    #   - POSTGRES_DB=postgres
+    #   - POSTGRES_USER=postgres
+    #   - POSTGRES_PASSWORD=password
+      # - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
+      # - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
     ports:
       - 5432:5432
     volumes:
@@ -106,6 +167,16 @@ services:
     networks:
       - cns-network
 
+  metabase:
+    image: metabase/metabase:latest
+    ports:
+      - 3000:3000
+    networks:
+      - cns-network
+    depends_on:
+      - postgres
+      - mongodb
+
   rabbitmq:
     image: rabbitmq:3.11-management
     container_name: rabbitmq
@@ -121,8 +192,8 @@ services:
       - cns-network
 
 volumes:
+  portainer_data:
   postgres-data:
-    driver: local
   mongodb-data:
   redis_data:
   rabbitmq_data:

@@ -63,6 +63,20 @@ git clone https://github.com/nntran/cloud-native-samples.git
 cd cloud-native-samples
 ```
 
+### Update your /etc/hosts with default domains
+
+Generate hosts for to use with docker compose:
+
+```bash
+./scripts/update-hosts.sh 127.0.0.1 dev.local
+```
+
+Generate hosts for to use with kubernetes (minikube):
+
+```bash
+./scripts/update-hosts.sh $(minikube ip) k8s.local
+```
+
 ### Run with Docker Compose
 
 * Launch all services in background

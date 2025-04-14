@@ -15,7 +15,7 @@ profiles:
           context: .
           docker:
             dockerfile: Dockerfile
-            target: development
+            target: production
           # sync:
           #   infer: ["**/*"]
           #   # manual:
@@ -33,4 +33,4 @@ profiles:
       - resourceType: service
         resourceName: order-service
         port: 3000
-        localPort: 8480
+        localPort: 8002
