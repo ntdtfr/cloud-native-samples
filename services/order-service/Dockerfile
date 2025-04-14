@@ -1,70 +1,90 @@
+# syntax=docker/dockerfile:1
+
 ARG NODE_VERSION=22
 
 ##
-## Stage: Base image
-FROM node:${NODE_VERSION}-alpine AS base
+## Stage 1: Development dependencies and build
+FROM node:${NODE_VERSION}-alpine AS builder
 
-# Define environment variables
-ENV APP_DIR=/opt/app
-ENV NODE_PORT=3000
+# Install git for Husky
+RUN apk add --no-cache git
 
-# Create user and group
-# RUN apk --no-cache add ca-certificates && \
-#     addgroup -S node && adduser -S node -G node
+# Set working directory
+WORKDIR /opt/app
 
-# Create application folder and assign rights to the node user
-RUN mkdir -p $APP_DIR && chown -R node:node $APP_DIR
+# Add package files and install dependencies
+COPY package.json package-lock.json ./
 
-# Set the working directory
-WORKDIR $APP_DIR
+# Install npm version 11.3.0
+RUN npm install -g npm@11.3.0 && \
+  npm install -g babel-cli
 
-# Copy package.json from the host to image
-COPY --chown=node:node package*.json .
+# Install all dependencies including dev dependencies
+# Use ci instead of install for more reliable builds
+RUN npm ci
 
-# Copy sources and docs from the host to image
-COPY --chown=node:node ./src .
+# Set up Git config to avoid Husky errors
+RUN git config --global init.defaultBranch main && \
+    git config --global user.email "ntran@ntdt.fr" && \
+    git config --global user.name "nntran"
 
-# Set the active user
-USER node
+# Initialize git repository to allow Husky installation
+RUN git init
 
-##
-## Stage: Development environment
-FROM base AS development
+# Copy source code
+COPY . .
 
-# Define environment variables
-# ENV APP_DIR=/opt/app
-ENV NODE_ENV=development
+# # Run linting
+# RUN npm run lint
 
-# Set the active user
-USER node
+# # Run tests
+# RUN npm run test
 
-# Install application modules
-RUN npm ci && \
-  npm cache clean --force
+# # Run prepare script which installs Husky
+# RUN npm run prepare
 
-# Expose port on the host
-EXPOSE $NODE_PORT
-
-# Run the application in development mode
-CMD ["npm", "run", "start"]
+# Build application (adjust according to your build script)
+RUN npm run build
 
 ##
-## Stage: Production environment
-FROM base AS production
+## Stage 2: Production dependencies only
+FROM node:${NODE_VERSION}-alpine AS dependencies
 
-# Define environment variables
+WORKDIR /opt/app
+
+COPY package.json package-lock.json ./
+
+# Install npm version 11.3.0
+RUN npm install -g npm@11.3.0
+
+# Install only production dependencies
+RUN npm ci --only=production
+
+##
+## Stage 3: Final image
+FROM node:${NODE_VERSION}-alpine AS production
+
+# Set non-root user for security
+USER node
+
+# Set environment variables
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# Set the active user
-USER node
+# Create app directory and set correct ownership
+WORKDIR /opt/app
 
-# Install application modules
-RUN npm ci --only=production && \
-  npm cache clean --force
+# Copy build artifacts and dependencies from previous stages
+COPY --from=builder --chown=node:node /opt/app/dist ./dist
+COPY --from=dependencies --chown=node:node /opt/app/node_modules ./node_modules
+COPY --chown=node:node package.json ./
 
-# Expose port on the host
-EXPOSE $NODE_PORT
+# Expose port
+EXPOSE ${PORT}
 
-# Run the application
-# CMD ["node", "src/server.js"]
-CMD ["npm", "run", "start"]
+# Use healthcheck to verify container health
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/health || exit 1
+
+# Use specific command to run the application
+CMD ["node", "dist/server.js"]

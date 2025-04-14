@@ -1,3 +1,6 @@
+[![Security Scanning](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml)
+[![Order Service CI](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml)
+
 # Order Service Microservice
 
 This is a microservice for managing orders in an e-commerce platform. The service is built with Node.js, Express, and MongoDB, following modern microservice architecture patterns.
@@ -86,6 +89,8 @@ order-service/
 
 2. Install dependencies:
     ```bash
+npm install --save-dev @babel/core @babel/preset-env @babel/plugin-proposal-class-properties @babel/plugin-proposal-optional-chaining @babel/plugin-proposal-nullish-coalescing-operator @babel/plugin-syntax-dynamic-import @babel/plugin-transform-runtime core-js@3
+
     npm install
     ```
 
@@ -97,7 +102,7 @@ order-service/
 
 3. Start the development server:
     ```bash
-    npm run dev
+    npm run start:dev
     ```
 
 ### Running with Docker
@@ -126,7 +131,7 @@ npm run test:coverage
 The API is documented using OpenAPI/Swagger. After starting the server, access the documentation at:
 
 ```
-http://localhost:8080/docs
+http://localhost:3000/docs
 ```
 
 ## Deployment
@@ -135,7 +140,7 @@ http://localhost:8080/docs
 
 ```bash
 docker build -t order-service .
-docker run -p 8080:3000 --env-file .env order-service
+docker run -p 8001:3000 --env-file .env order-service
 ```
 
 ### Kubernetes Deployment

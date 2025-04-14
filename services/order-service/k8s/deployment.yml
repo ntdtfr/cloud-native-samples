@@ -49,12 +49,12 @@ spec:
           requests:
             memory: "128Mi"  # Initial memory request
             cpu: "100m"       # Initial CPU request
-        # livenessProbe:
-        #   httpGet:
-        #     path: /health          # The path to check for the liveness probe
-        #     port: 3000             # The port to check on
-        #   initialDelaySeconds: 30  # Wait this many seconds before starting the probe
-        #   periodSeconds: 10        # Check the probe every 10 seconds
+        livenessProbe:
+          httpGet:
+            path: /health          # The path to check for the liveness probe
+            port: 3000             # The port to check on
+          initialDelaySeconds: 30  # Wait this many seconds before starting the probe
+          periodSeconds: 10        # Check the probe every 10 seconds
         # readinessProbe:
         #   httpGet:
         #     path: /                # The path to check for the readiness probe

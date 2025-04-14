@@ -8,6 +8,9 @@ profiles:
     activation:
       - kubeContext: minikube
     build:
+      # platforms:
+      #   - "linux/amd64"
+      #   - "linux/arm64"
       tagPolicy:
         sha256: {}
       artifacts:
@@ -15,7 +18,9 @@ profiles:
           context: .
           docker:
             dockerfile: Dockerfile
-            target: development
+            target: production
+            cacheFrom:
+              - order-service
           # sync:
           #   infer: ["**/*"]
           #   # manual:
@@ -24,6 +29,10 @@ profiles:
       local:
         useBuildkit: true
         concurrency: 0
+    # test:
+    #   - image: order-service
+    #     command: [ "npm", "run", "test" ]
+    #     args: [ "--", "--watchAll=false" ]
     deploy:
       kubectl: {}
     manifests:
@@ -33,4 +42,4 @@ profiles:
       - resourceType: service
         resourceName: order-service
         port: 3000
-        localPort: 8480
+        localPort: 8002

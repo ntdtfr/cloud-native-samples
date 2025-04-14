@@ -6,13 +6,17 @@ info:
   version: 1.0.0
   contact:
     name: API Support
-    email: support@example.com
+    email: support@ntdt.fr
 servers:
-  - url: https://api.example.com/api/v1
+  - url: https://api.ntdt.fr/api/v1
     description: Production server
-  - url: https://staging-api.example.com/api/v1
+  - url: https://api.staging.ntdt.fr/api/v1
     description: Staging server
-  - url: http://localhost:8080/api/v1
+  - url: http://api.k8s.local/api/v1
+    description: Local development server using a local Kubernetes cluster (Minikube)
+  - url: http://api.dev.local/api/v1
+    description: Local development server using Docker and Traefik as proxy
+  - url: http://localhost:8002/api/v1
     description: Local development server
 tags:
   - name: Orders

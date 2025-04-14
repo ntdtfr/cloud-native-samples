@@ -1,3 +1,6 @@
+[![Security Scanning](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml)
+[![Order Service CI](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml)
+
 # Cloud Native Microservices
 Samples Cloud Native projects using modern technologies (Kubernetes, Docker, Java, Golang, Node.JS, ...)
 
@@ -61,6 +64,20 @@ Clone the repository
 ```bash
 git clone https://github.com/nntran/cloud-native-samples.git
 cd cloud-native-samples
+```
+
+### Update your /etc/hosts with default domains
+
+Generate hosts for to use with docker compose:
+
+```bash
+./scripts/update-hosts.sh 127.0.0.1 dev.local
+```
+
+Generate hosts for to use with kubernetes (minikube):
+
+```bash
+./scripts/update-hosts.sh $(minikube ip) k8s.local
 ```
 
 ### Run with Docker Compose
