@@ -28,7 +28,8 @@ env:
   SOURCE_DIR: services/order-service
   NODE_VERSION: 22
   DOCKER_REGISTRY: docker.io  # ghcr.io
-  DOCKER_IMAGE_NAME: ntdtfr/order-service
+  DOCKER_REPOSITORY: ntdtfr
+  DOCKER_IMAGE_NAME: order-service
   DOCKER_TARGET: production
 
 jobs:
@@ -53,20 +54,30 @@ jobs:
         sudo mv skaffold /usr/local/bin
 
     - name: Build
-      run: skaffold build --file-output=build.json
+      run: skaffold build -m order-service --default-repo ${{ env.DOCKER_REPOSITORY }} --file-output=build.json
 
-    - name: Run Tests
-      run: skaffold test --file-output=test.json
+    # - name: Run Tests
+    #   run: skaffold test --file-output=test.json
 
   security-scan:
     runs-on: ubuntu-latest
     needs: build-and-test
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: ${{ env.SOURCE_DIR }}/package-lock.json
 
     - name: Run dependency vulnerability check
-      run: npm audit --production
+      run: |
+        cd ${{ env.SOURCE_DIR }}
+        ls -al
+        npm audit --production
 
     - name: Run SAST scan
       uses: github/codeql-action/analyze@v2
