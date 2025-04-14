@@ -31,8 +31,8 @@ env:
   DOCKER_REPOSITORY: ntdtfr
   DOCKER_IMAGE_NAME: order-service
   DOCKER_TARGET: production
-  GITHUB_USER: ${{ secrets.GH_USER_NAME }}
-  GITHUB_EMAIL: ${{ secrets.GH_USER_EMAIL }}
+  GITHUB_USER: ${{ secrets.GH_USER }}
+  GITHUB_EMAIL: ${{ secrets.GH_EMAIL }}
 
 jobs:
   build-and-test:
