@@ -54,10 +54,18 @@ jobs:
         sudo mv skaffold /usr/local/bin
 
     - name: Build
-      run: skaffold build -m order-service --default-repo ${{ env.DOCKER_REPOSITORY }} --file-output=build.json
+      id: build
+      run: |
+        skaffold build -m order-service --default-repo ${{ env.DOCKER_REPOSITORY }} --file-output=build.json
 
     # - name: Run Tests
     #   run: skaffold test --file-output=test.json
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build
+        path: build.json
 
   security-scan:
     runs-on: ubuntu-latest
