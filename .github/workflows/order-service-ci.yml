@@ -48,6 +48,7 @@ jobs:
       run: |
         ls -al
         cd ${{ env.SOURCE_DIR }}
+        ls -al
         pwd
 
     - name: Install npm version 11.3.0 and babel CLI
@@ -56,10 +57,14 @@ jobs:
         npm install -g babel-cli
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        ls -al
+        npm ci
 
     - name: Run linting
-      run: npm run lint
+      run: |
+        ls -al
+        npm run lint
 
     - name: Run tests
       run: npm run test
