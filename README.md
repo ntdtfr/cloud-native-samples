@@ -101,8 +101,8 @@ docker compose up --build
 # Build and run only keycloak
 docker compose up --build keycloak
 
-# Build and run keycloak and order-service
-docker compose up --build keycloak order-service
+# Build and run the Order Service stack
+docker compose up --build mongodb order-service
 ```
 
 * Stop services 
@@ -133,10 +133,10 @@ skaffold run -p minikube
 * Build and deploy some specific services or groups of services to Minikube
 
 ```bash
-skaffold dev -p minikube -m infrastructure,product-service,order-service
+# Build and run the Order Service and MongoDB
+skaffold dev -p minikube -m mongodb,order-service
 
-# or only components for a specific service (order-service)
-
+# Build and run the Order Service full stack (API Gateway, Keycloak, Order Service and MongoDB)
 skaffold dev -p minikube -m api-gateway,keycloak,mongodb,order-service
 ```
 
