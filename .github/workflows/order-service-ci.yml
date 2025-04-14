@@ -100,7 +100,7 @@ jobs:
   docker-build-and-push:
     runs-on: ubuntu-latest
     needs: [build-and-test, security-scan]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
     - uses: actions/checkout@v4
@@ -130,7 +130,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: docker-build-and-push
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
     - name: Set up K8s tools
@@ -145,8 +145,8 @@ jobs:
 
     - name: Deploy to Dev
       if: github.event_name == 'pull_request'
-      run: skaffold deploy --build-artifacts=build.json --namespaces=dev
+      run:  echo "Deploying to production"  #skaffold deploy --build-artifacts=build.json --namespaces=dev
 
     - name: Deploy to Production
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: skaffold deploy --build-artifacts=build.json --namespaces=production
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      run: echo "Deploying to production"   #skaffold deploy --build-artifacts=build.json --namespaces=production
