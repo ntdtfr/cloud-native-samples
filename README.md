@@ -1,3 +1,6 @@
+[![Security Scanning](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml)
+[![Order Service CI](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml)
+
 # Cloud Native Microservices
 Samples Cloud Native projects using modern technologies (Kubernetes, Docker, Java, Golang, Node.JS, ...)
 

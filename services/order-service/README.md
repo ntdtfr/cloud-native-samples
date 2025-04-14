@@ -1,3 +1,6 @@
+[![Security Scanning](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/security-scan.yml)
+[![Order Service CI](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml/badge.svg)](https://github.com/nntran/cloud-native-samples/actions/workflows/order-service-ci.yml)
+
 # Order Service Microservice
 
 This is a microservice for managing orders in an e-commerce platform. The service is built with Node.js, Express, and MongoDB, following modern microservice architecture patterns.
@@ -86,6 +89,8 @@ order-service/
 
 2. Install dependencies:
     ```bash
+npm install --save-dev @babel/core @babel/preset-env @babel/plugin-proposal-class-properties @babel/plugin-proposal-optional-chaining @babel/plugin-proposal-nullish-coalescing-operator @babel/plugin-syntax-dynamic-import @babel/plugin-transform-runtime core-js@3
+
     npm install
     ```
 
