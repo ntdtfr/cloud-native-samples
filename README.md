@@ -1,4 +1,4 @@
-[![Security Scanning](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/security-scan.yml/badge.svg)](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/security-scan.yml)
+[![Security Scanning](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/trivy.yml/badge.svg)](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/trivy.yml)
 [![Order Service CI](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/order-service-ci.yml/badge.svg)](https://github.com/ntdtfr/cloud-native-samples/actions/workflows/order-service-ci.yml)
 
 # Cloud Native Microservices
